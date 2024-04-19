@@ -1,0 +1,17 @@
+{
+  "path_to_data": "mlops_data.csv",
+  "target": "gender",
+  "numeric_features": [
+    "E_NEds",
+    "E_Bpag",
+    "NEds",
+    "NDays",
+    "NPcreated",
+    "ns_user",
+    "ns_wikipedia",
+    "ns_talk",
+    "ns_userTalk"
+  ],
+  "interquantile_range": [0.25, 0.75],
+  "outlier_std": 1.5
+}
