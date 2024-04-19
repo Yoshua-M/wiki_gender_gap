@@ -3,6 +3,7 @@ Utility functions for project functionality
 """
 import json
 
+
 class Kernel:
 
     def __init__(self):
