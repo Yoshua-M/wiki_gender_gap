@@ -1,5 +1,5 @@
 {
-  "path_to_data": "mlops_data.csv",
+  "path_to_data": "src/mlops_data.csv",
   "target": "gender",
   "numeric_features": [
     "E_NEds",
