@@ -6,7 +6,7 @@ from sklearn.model_selection import cross_val_score, train_test_split
 from src.utils import Kernel
 
 
-def cross_validate(model, train_features, train_target, kernel:Kernel):
+def cross_validate(model, train_features, train_target, kernel: Kernel):
     cross_val_settings = kernel.config['cross_val_settings']
 
     cv_scores = cross_val_score(
@@ -23,13 +23,15 @@ def test_model(
         train_target,
         test_features,
         test_target,
-        kernel:Kernel):
+        kernel: Kernel):
     model.fit(train_features, train_target)
 
     # Assess the model on the holdout set
     test_score = model.score(test_features, test_target)
 
     print("Test Score:", test_score)
+
+    return test_score
 
 
 def train_and_evaluate(model, data, kernel: Kernel):
@@ -40,22 +42,24 @@ def train_and_evaluate(model, data, kernel: Kernel):
         train_test_split(features, target, **config['split_settings']))
 
     cross_validate(model, train_features, train_target, kernel)
-    test_model(model, train_features, train_target,
-               test_features, test_target, kernel)
+    result = test_model(model, train_features, train_target,
+                        test_features, test_target, kernel)
+
+    return result
+
 
 # %%
 import pandas as pd
 from src.pipeline import data_pipeline
 from sklearn.linear_model import LogisticRegression
+import json
 
 kernel = Kernel()
 df = pd.read_csv('src/mlops_data.csv')
 df = data_pipeline.run(df, kernel)
 
 model = LogisticRegression(max_iter=1000)
-train_and_evaluate(model, df, kernel)
+result = train_and_evaluate(model, df, kernel)
 
-
-
-
-
+with open("src/metrics.json", "w") as f:
+    json.dump({'recall': result}, f)
