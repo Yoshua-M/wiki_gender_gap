@@ -55,6 +55,19 @@ def feature_normalization(df: pd.DataFrame, kernel: Kernel) -> pd.DataFrame:
     return df
 
 
+kernel = Kernel()
+config = kernel.config
+
+
+class Preprocessor:
+    numeric_features = config['numeric_features']
+
+    def transform(self, df):
+        df[self.numeric_features] = df[self.numeric_features].apply(
+            lambda x: boxcox(x + 1)[0])
+        return df
+
+
 def feature_scaling(df: pd.DataFrame, kernel: Kernel) -> pd.DataFrame:
     scaler = StandardScaler()
     df = scaler.fit_transform(df)

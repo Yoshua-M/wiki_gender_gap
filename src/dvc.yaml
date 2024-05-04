@@ -1,0 +1,8 @@
+stages:
+  pipeline:
+    cmd: python -m src.pipeline.training_pipeline
+
+    deps:
+      - pipeline/training_pipeline.py
+    outs:
+      - metrics.json
