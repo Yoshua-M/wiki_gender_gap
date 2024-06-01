@@ -1,0 +1,25 @@
+{
+  "path_to_data": "src/mlops_data.csv",
+  "target": "gender",
+  "numeric_features": [
+    "E_NEds",
+    "E_Bpag",
+    "NEds",
+    "NDays",
+    "NPcreated",
+    "ns_user",
+    "ns_wikipedia",
+    "ns_talk",
+    "ns_userTalk"
+  ],
+  "interquantile_range": [0.25, 0.75],
+  "outlier_std": 1.5,
+  "cross_val_settings": {
+    "cv": 5,
+    "scoring": "recall"
+  },
+  "split_settings": {
+    "test_size": 0.2,
+    "random_state": 42
+  }
+}

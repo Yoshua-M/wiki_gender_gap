@@ -1,7 +1,8 @@
 # main.py
 import pickle
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Response, UploadFile, File
+from io import StringIO
 from pydantic import BaseModel
 import uvicorn
 import pandas as pd
@@ -9,55 +10,50 @@ import pandas as pd
 app = FastAPI()
 
 
-class Item(BaseModel):
-    E_NEds: float = 0.5
-    E_Bpag: float = 0.8
-    NEds: int = 100
-    NDays: int = 10
-    NPcreated: int = 1
-    ns_user: int = 1
-    ns_wikipedia: int = 0
-    ns_talk: int = 0
-    ns_userTalk: int = 0
-    # Add more features as needed
+# Function to load the model and preprocessor
+def load_model(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)
 
 
-
-@app.post("/predict")
-async def predict(features: Item):
-    try:
-        # Load the serialized model
-        def load_model(filename):
-            with open(filename, 'rb') as f:
-                model = pickle.load(f)
-            return model
-
-        # Deserialize the model
-        print('loading model')
-        model = load_model("models/model_v1_2024-05-02.pkl")
-        preprocessor = load_model("models/preprocessor_2024-05-02.pkl")
-        print('model loading complete')
-
-        # Prepare input features for prediction
-        print('features:')
-        print(features.__dict__)
-        features_df = pd.DataFrame(features.__dict__, index=[0])
-
-        # Make predictions
-        print('attempting prediction')
-        prediction = model.predict(preprocessor.transform(features_df))
-
-        # Return the prediction as JSON response
-        return {"predicted class": prediction[0]}
-
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
+# Load model and preprocessor
+model = load_model("models/model.pkl")
+preprocessor = load_model("models/preprocessor.pkl")
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.post("/predict_batch")
+async def predict_batch(file: UploadFile = File(...)):
+    # Read the uploaded file
+    contents = await file.read()
+    df = pd.read_csv(StringIO(contents.decode("utf-8")))
+
+    # Preprocess the data
+    df_unlabeled, df_labeled = preprocessor.slice(df)
+
+    unlabeled_preprocessed = preprocessor.preprocess(df_unlabeled)
+    labaled_preprocessed = preprocessor.preprocess(df_labeled)
+    test_labels = labaled_preprocessed[preprocessor.target]
+    test_features = labaled_preprocessed.drop(preprocessor.target, axis=1)
+    features = unlabeled_preprocessed.drop(preprocessor.target, axis=1)
+
+    # Make batch predictions
+    client_predictions = model.predict(features)
+    monitor_predictions = model.predict(test_features)
+
+    # Add predictions to the dataframe
+    df_unlabeled['predicted_class'] = client_predictions
+    df_labeled['predicted_class'] = monitor_predictions
+
+    score = model.score(test_features, test_labels)
+    print(f"score: {score}")
+
+    # Convert dataframe to CSV
+    output = StringIO()
+    df_unlabeled.to_csv(output, index=False)
+    output.seek(0)
+
+    # Return the predictions as a CSV file
+    return Response(content=output.getvalue(), media_type="text/csv")
 
 
 if __name__ == "__main__":
