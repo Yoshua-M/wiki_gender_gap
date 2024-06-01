@@ -2,6 +2,7 @@
 Training and assesing a model
 """
 import json
+import os
 
 import pandas as pd
 from src.pipeline import data_pipeline
@@ -17,6 +18,10 @@ def serialize_model(model, filename_prefix="model"):
     filename = f"models/{filename_prefix}.pkl"
     filename_app = "app/" + filename
 
+    # Create directories if they don't exist
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    os.makedirs(os.path.dirname(filename_app), exist_ok=True)
+
     # Serialize model to pickle file
     with open(filename, 'wb') as f:
         pickle.dump(model, f)
@@ -25,6 +30,7 @@ def serialize_model(model, filename_prefix="model"):
         pickle.dump(model, f)
 
     print(f"Model serialized and saved as {filename}")
+    print(f"Model serialized and saved as {filename_app}")
 
 
 

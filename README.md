@@ -6,6 +6,9 @@ This repo is intended to demonstrate what was learnt in the MLOps Bootcamp initi
  - A good solution to this problem is to train an ML Model to classify editors based on information collected.
  - This project has been developed with the MLOps mindset, so the implementation can be deployed and maintain for its constant usage.
 
+## Data
+The data used to train and test the model is available here: https://archive.ics.uci.edu/dataset/852/gender+gap+in+spanish+wp
+
 ## Building model and preprocessor
 
 The app needs two serialized objects to work propperly. One is the model and the other is the preprocessor.
