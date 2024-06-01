@@ -84,3 +84,7 @@ Everytime training pipeline is executed, the next happens
 When we send the csv file through the API predict_batch endpoint the data is splitted and processed as follows:
 
 ![api_workflow](img/API_workflow.png)
+
+## Final note
+
+More documentation about the process can be found at the Capstone project progress file.
