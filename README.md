@@ -36,6 +36,12 @@ NOTE: Make sure you have the corresponding csv file at the repository. The relat
 
 This same process would be enough to retrain the model everytime you need
 
+### Model and data versions
+Changes in model training, like the features used, hyperparameters and train-test splitting can be made by writing the desired configurations at the settings.json file.
+Data processing settings like those used to drop outliers can be also configure at that file.
+
+Using DVC, the model and data versioning can be accomplished. The dvc.yaml file can be used for modifications of this versioning control.
+
 ## Running the App
 
 To build the Docker image make sure you're at the app directory
