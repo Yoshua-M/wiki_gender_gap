@@ -14,12 +14,14 @@ from datetime import datetime
 
 
 def serialize_model(model, filename_prefix="model"):
-    # Generate filename with current date
-    current_date = datetime.now().strftime("%Y-%m-%d")
     filename = f"models/{filename_prefix}.pkl"
+    filename_app = "app/" + filename
 
     # Serialize model to pickle file
     with open(filename, 'wb') as f:
+        pickle.dump(model, f)
+
+    with open(filename_app, 'wb') as f:
         pickle.dump(model, f)
 
     print(f"Model serialized and saved as {filename}")

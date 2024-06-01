@@ -45,7 +45,12 @@ async def predict_batch(file: UploadFile = File(...)):
     df_labeled['predicted_class'] = monitor_predictions
 
     score = model.score(test_features, test_labels)
-    print(f"score: {score}")
+    if score < 0.8:
+        print("You're model performance might be drifting or need "
+              "rearrangements")
+        print(f"Model's score (recall): {score}")
+    else:
+        print(f"Model's score (recall): {score}")
 
     # Convert dataframe to CSV
     output = StringIO()
